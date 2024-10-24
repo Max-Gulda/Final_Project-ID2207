@@ -1,0 +1,9 @@
+username,password,role,department,subTeam,manager
+cso,cso,CSO,N/A,N/A,N/A
+scso,scso,SCSO,N/A,N/A,N/A
+am,am,ADMIN_MANAGER,N/A,N/A,N/A
+hr,hr,HR_MANAGER,N/A,N/A,N/A
+fm,fm,FINANCIAL_MANAGER,N/A,N/A,N/A
+pm,pm,PRODUCTION_SERVICE_MANAGER,N/A,N/A,N/A
+sm,sm,PRODUCTION_SERVICE_MANAGER,N/A,N/A,N/A
+audio,audio,SIMPLE_USER,Production,Audio,pm

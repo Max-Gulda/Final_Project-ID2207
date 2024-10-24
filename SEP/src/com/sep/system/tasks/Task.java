@@ -46,6 +46,10 @@ public class Task {
         this.needsReview = true;  // Set to true if a comment on budget is made
     }
 
+    public boolean needsReview(){
+        return needsReview;
+    }
+
     public String getPlan() {
         return plan;
     }
@@ -82,6 +86,6 @@ public class Task {
     public String toString() {
         return "[" + description + ", " + budget +
                 ", " + (budgetComment != null ? budgetComment : "N/A") +
-                ", " + (plan != null ? plan : "N/A") + "\nNeeds Review: " + needsReview + "]";
+                ", " + (plan != null ? plan : "N/A") + "]";
     }
 }

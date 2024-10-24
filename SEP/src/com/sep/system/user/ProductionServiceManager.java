@@ -138,6 +138,7 @@ public class ProductionServiceManager extends User {
             for (Task t : taskList) {
                 if(t.equals(task)){
                     t.setBudgetComment(comment);
+
                 }
             }
         }

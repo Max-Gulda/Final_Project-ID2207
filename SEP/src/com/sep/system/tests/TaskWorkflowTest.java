@@ -29,7 +29,7 @@ public class TaskWorkflowTest {
 
         // Step 2: Add a SimpleUser to the sub-team
         psm.createSimpleUser("devUser", "devPass", "IT", subTeamName);
-        SimpleUser simpleUser = psm.getSubTeams().get(subTeamName).get(0);
+        SimpleUser simpleUser = psm.getSubTeams().get(subTeamName).getFirst();
         assert simpleUser != null : "SimpleUser should be created and added to sub-team";
         assert simpleUser.getSubTeam().equals(subTeamName) : "SimpleUser should be in the correct sub-team";
 
@@ -37,7 +37,7 @@ public class TaskWorkflowTest {
         String taskDescription = "Develop Feature A";
         double taskBudget = 5000.0;
         psm.createTaskForSubTeam(subTeamName, taskDescription, taskBudget);
-        Task assignedTask = psm.getTasks().get(subTeamName).get(0);
+        Task assignedTask = psm.getTasks().get(subTeamName).getFirst();
         assert assignedTask != null : "Task should be created and assigned to sub-team";
         assert taskDescription.equals(assignedTask.getDescription()) : "Task description should match";
         assert taskBudget == assignedTask.getBudget() : "Task budget should match";

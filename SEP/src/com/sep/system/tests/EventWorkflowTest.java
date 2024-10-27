@@ -17,7 +17,7 @@ public class EventWorkflowTest {
 
         // Step 1: CSO creates an event request
         cso.createEventRequest("Annual Conference", "Global Corp", "Annual corporate conference event", 100000.0);
-        EventRequest request = cso.getEventRequests().get(0);
+        EventRequest request = cso.getEventRequests().getFirst();
         assert "PENDING".equals(request.getStatus()) : "Initial status should be PENDING";
 
         // Step 2: CSO sends the request to SCSO

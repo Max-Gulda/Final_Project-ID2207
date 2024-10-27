@@ -2,6 +2,7 @@ package com.sep.system.controller;
 
 import com.sep.system.auth.AuthenticationService;
 import com.sep.system.requests.EventRequest;
+import com.sep.system.requests.StaffRecruitmentRequest;
 import com.sep.system.user.*;
 import com.sep.system.tasks.Task;
 import com.sep.system.util.DataManager;
@@ -18,6 +19,8 @@ public class SEPController {
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel cards;
+    private List<StaffRecruitmentRequest> staffRecruitmentRequests = new ArrayList<>();
+
 
     public SEPController(AuthenticationService authService, DataManager dataManager, JFrame frame, CardLayout cardLayout, JPanel cards) {
         this.authService = authService;
@@ -92,32 +95,16 @@ public class SEPController {
     // Handle processing event requests by different roles
     public void handleProcessEventRequests() {
         if (loggedInUser instanceof SCSO) {
-            List<User> users = authService.getUsers();
-            for (User user : users) {
-                if (user instanceof CSO) {
-                    CSO cso = (CSO) user;
-                    for (EventRequest request : cso.getEventRequests()) {
-                        if ("PENDING".equals(request.getStatus())) {
-                            int option = JOptionPane.showConfirmDialog(frame,
-                                    "Approve request: " + request.getEventName() + "?",
-                                    "SCSO Approval", JOptionPane.YES_NO_OPTION);
-
-                            if (option == JOptionPane.YES_OPTION) {
-                                request.setStatus("APPROVED");
-                                JOptionPane.showMessageDialog(frame, "Event request approved.");
-                            } else {
-                                request.setStatus("DISAPPROVED");
-                                JOptionPane.showMessageDialog(frame, "Event request disapproved.");
-                            }
-                        }
-                    }
-                }
-            }
-            dataManager.saveUsers(authService.getUsers());  // Save the updated state after processing requests
+            processEventRequestsAsSCSO();
+        } else if (loggedInUser instanceof FinancialManager) {
+            processEventRequestsAsFinancialManager();
+        } else if (loggedInUser instanceof AdminManager) {
+            processEventRequestsAsAdminManager();
         } else {
             JOptionPane.showMessageDialog(frame, "You do not have permission to process event requests.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
 
     public void handleViewMyEventRequests() {
@@ -188,6 +175,40 @@ public class SEPController {
         } else {
             JOptionPane.showMessageDialog(frame, "You do not have permission to view sub-teams.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public void handleStaffRecruitmentRequest(String details) {
+        if (loggedInUser instanceof ProductionServiceManager) {
+            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
+            psm.createStaffRecruitmentRequest(details);
+            staffRecruitmentRequests.add(new StaffRecruitmentRequest(details, psm));
+            JOptionPane.showMessageDialog(frame, "Staff recruitment request sent to HR Manager.");
+        } else {
+            JOptionPane.showMessageDialog(frame, "You do not have permission to make staff recruitment requests.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Method to get all staff recruitment requests (for HR Manager)
+    public List<StaffRecruitmentRequest> getStaffRecruitmentRequests() {
+        if (loggedInUser instanceof HRManager) {
+            return staffRecruitmentRequests;
+        }
+        return new ArrayList<>();
+    }
+
+    // Method to get PSM's own recruitment requests
+    public List<StaffRecruitmentRequest> getStaffRecruitmentRequestsByPSM() {
+        if (loggedInUser instanceof ProductionServiceManager) {
+            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
+            List<StaffRecruitmentRequest> psmRequests = new ArrayList<>();
+            for (StaffRecruitmentRequest request : staffRecruitmentRequests) {
+                if (request.getRequester().equals(psm)) {
+                    psmRequests.add(request);
+                }
+            }
+            return psmRequests;
+        }
+        return new ArrayList<>();
     }
 
 
@@ -359,8 +380,49 @@ public class SEPController {
         } else if(loggedInUser instanceof SimpleUser){
             System.out.println(loggedInUser);
             cardLayout.show(cards, "SimpleUser");
+        }else if (loggedInUser instanceof HRManager) {
+            cardLayout.show(cards, "HRManager");
+            System.out.println("Switching to HRManager view.");
+        }else if (loggedInUser instanceof FinancialManager){
+            cardLayout.show(cards, "FinancialManager");
+            System.out.println("Switching to FM-ManagerView view.");
         } else {
             JOptionPane.showMessageDialog(frame, "No view available for your role.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void handleViewEventRequests() {
+        if (loggedInUser instanceof SCSO) {
+            List<User> users = authService.getUsers();
+            StringBuilder requestsInfo = new StringBuilder();
+
+            for (User user : users) {
+                if (user instanceof CSO) {
+                    CSO cso = (CSO) user;
+                    for (EventRequest request : cso.getEventRequests()) {
+                        requestsInfo.append("Event Name: ").append(request.getEventName()).append("\n")
+                                .append("Client Name: ").append(request.getClientName()).append("\n")
+                                .append("Description: ").append(request.getDescription()).append("\n")
+                                .append("Budget: ").append(request.getBudget()).append("\n")
+                                .append("Status: ").append(request.getStatus()).append("\n")
+                                .append("Budget Comment: ").append(request.getBudgetComment() != null ? request.getBudgetComment() : "N/A").append("\n")
+                                .append("Finalized: ").append(request.isFinalized() ? "Yes" : "No").append("\n")
+                                .append("\n");
+                    }
+                }
+            }
+
+            if (requestsInfo.length() == 0) {
+                requestsInfo.append("No event requests available.");
+            }
+
+            JTextArea textArea = new JTextArea(requestsInfo.toString());
+            textArea.setEditable(false);
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            JOptionPane.showMessageDialog(frame, scrollPane, "View Event Requests", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(frame, "You do not have permission to view event requests.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

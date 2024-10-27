@@ -1,7 +1,9 @@
+// File: com/sep/system/gui/PSMView.java
 package com.sep.system.gui;
 
 import com.sep.system.controller.SEPController;
-import com.sep.system.tasks.Task;
+import com.sep.system.requests.StaffRecruitmentRequest;
+import com.sep.system.tasks.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,6 +51,16 @@ public class PSMView {
         viewTasksButton.addActionListener(e -> showMyTasks());
         buttonPanel.add(viewTasksButton);
 
+        // Button to request staff recruitment
+        JButton requestStaffButton = new JButton("Request Staff Recruitment");
+        requestStaffButton.addActionListener(e -> showRequestStaffDialog());
+        buttonPanel.add(requestStaffButton);
+
+        // Button to view recruitment request status
+        JButton viewRequestStatusButton = new JButton("View Recruitment Request Status");
+        viewRequestStatusButton.addActionListener(e -> showRecruitmentRequestStatus());
+        buttonPanel.add(viewRequestStatusButton);
+
         // Button to view sub-teams
         JButton viewSubTeamsButton = new JButton("View Sub-Teams");
         viewSubTeamsButton.addActionListener(e -> controller.handleViewSubTeams());
@@ -61,7 +73,7 @@ public class PSMView {
 
         psmPanel.add(buttonPanel, BorderLayout.CENTER);
 
-        // Text area to display task details
+        // Text area to display task details and recruitment request status
         taskDetailsArea = new JTextArea(10, 50);
         taskDetailsArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(taskDetailsArea);
@@ -117,13 +129,16 @@ public class PSMView {
         JTextField usernameField = new JTextField();
         JTextField passwordField = new JTextField();
         JTextField departmentField = new JTextField();
-        JTextField subTeamField = new JTextField();
+
+        // Get sub-teams managed by this PSM
+        String[] subTeams = controller.getSubTeamsForPSM();
+        JComboBox<String> subTeamComboBox = new JComboBox<>(subTeams);
 
         Object[] message = {
                 "Username:", usernameField,
                 "Password:", passwordField,
                 "Department:", departmentField,
-                "Sub-Team:", subTeamField
+                "Sub-Team:", subTeamComboBox
         };
 
         int option = JOptionPane.showConfirmDialog(psmPanel, message, "Create Simple User", JOptionPane.OK_CANCEL_OPTION);
@@ -131,7 +146,7 @@ public class PSMView {
             String username = usernameField.getText();
             String password = passwordField.getText();
             String department = departmentField.getText();
-            String subTeam = subTeamField.getText();
+            String subTeam = (String) subTeamComboBox.getSelectedItem();
             controller.handleCreateSimpleUser(username, password, department, subTeam); // Call the controller method
         }
     }
@@ -156,6 +171,35 @@ public class PSMView {
             }
             taskDetailsArea.setText(taskInfo.toString());
         }
+    }
+
+    private void showRequestStaffDialog() {
+        JTextArea requestDetailsArea = new JTextArea(5, 20);
+        Object[] message = {
+                "Request Details:", new JScrollPane(requestDetailsArea)
+        };
+
+        int option = JOptionPane.showConfirmDialog(psmPanel, message, "Staff Recruitment Request", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            String details = requestDetailsArea.getText();
+            controller.handleStaffRecruitmentRequest(details);
+        }
+    }
+
+    private void showRecruitmentRequestStatus() {
+        List<StaffRecruitmentRequest> requests = controller.getStaffRecruitmentRequestsByPSM();
+
+        if (requests.isEmpty()) {
+            taskDetailsArea.setText("No staff recruitment requests.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (StaffRecruitmentRequest request : requests) {
+            sb.append("Details:\n").append(request.getRequestDetails()).append("\n");
+            sb.append("Status: ").append(request.getStatus()).append("\n\n");
+        }
+        taskDetailsArea.setText(sb.toString());
     }
 
     public JPanel getPanel() {

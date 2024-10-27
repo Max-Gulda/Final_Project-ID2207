@@ -65,6 +65,15 @@ public class SEPSystemGUI {
         SimpleUserView simpleUserView = new SimpleUserView(controller);
         cards.add(simpleUserView.getPanel(), "SimpleUser");
 
-        // Add more views as needed based on roles (e.g., CSO, FinancialManager, etc.)
+        // Add HR view
+        HRView hrView = new HRView(controller);
+        cards.add(hrView.getPanel(), "HRManager");
+
+        // Add SCO view
+        CSOView csoView = new CSOView(controller);
+        cards.add(csoView.getPanel(), "CSO");
+
+        FinancialManagerView fmView = new FinancialManagerView(controller);
+        cards.add(fmView.getPanel(), "FinancialManager");
     }
 }

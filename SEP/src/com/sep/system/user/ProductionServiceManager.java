@@ -1,5 +1,6 @@
 package com.sep.system.user;
 
+import com.sep.system.requests.StaffRecruitmentRequest;
 import com.sep.system.tasks.Task;
 import com.sep.system.auth.AuthenticationService; // Import the AuthenticationService
 import java.util.*;
@@ -8,12 +9,14 @@ public class ProductionServiceManager extends User {
     private Map<String, List<SimpleUser>> subTeams;
     private Map<String, List<Task>> tasks;
     private AuthenticationService authService; // Reference to AuthenticationService
+    private List<StaffRecruitmentRequest> staffRecruitmentRequests;
 
     // Constructor
     public ProductionServiceManager(String username, String password) {
         super(username, password, Role.PRODUCTION_SERVICE_MANAGER);
         this.subTeams = new HashMap<>();
         this.tasks = new HashMap<>();
+        this.staffRecruitmentRequests = new ArrayList<>();
     }
 
     public void setAuthService(AuthenticationService authService) {
@@ -153,4 +156,16 @@ public class ProductionServiceManager extends User {
             }
         }
     }
+
+    public void createStaffRecruitmentRequest(String details) {
+        StaffRecruitmentRequest request = new StaffRecruitmentRequest(details, this);
+        staffRecruitmentRequests.add(request);
+        System.out.println("Staff recruitment request created and sent to HR Manager.");
+    }
+
+    // Getter for staff recruitment requests
+    public List<StaffRecruitmentRequest> getStaffRecruitmentRequests() {
+        return staffRecruitmentRequests;
+    }
+
 }

@@ -241,6 +241,7 @@ public class SEPController {
             fm.processFinancialRequest(request, approve);
             JOptionPane.showMessageDialog(frame, "Financial request " + (approve ? "approved." : "disapproved."));
             dataManager.saveUsers(authService.getUsers()); // Save the updated state
+            request.getRequester().setStatusFinancialRequest(request);
         } else {
             JOptionPane.showMessageDialog(frame, "You do not have permission to process financial requests.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -509,7 +510,6 @@ public class SEPController {
         }
     }
 
-
     public User getLoggedInUser() {
         return loggedInUser; // Return the currently logged-in user
     }
@@ -524,7 +524,6 @@ public class SEPController {
         return Collections.emptyList(); // Return an empty list if not a SimpleUser
     }
 
-
     public List<Task> getTasksCreatedByPSM() {
         if (loggedInUser instanceof ProductionServiceManager) {
             ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
@@ -532,7 +531,6 @@ public class SEPController {
         }
         return Collections.emptyList(); // Return an empty list if the user is not a PSM
     }
-
 
     public void handleCreateSubTeam(String subTeamName) {
         if (loggedInUser instanceof ProductionServiceManager) {
@@ -564,9 +562,6 @@ public class SEPController {
             JOptionPane.showMessageDialog(frame, "You do not have permission to add comments.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
-
 
     // Utility method to find a component by its name in a container
     private Component findComponentByName(Container container, String name) {

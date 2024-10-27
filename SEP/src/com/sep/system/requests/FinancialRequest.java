@@ -30,4 +30,17 @@ public class FinancialRequest {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        FinancialRequest that = (FinancialRequest) obj;
+        return requestDetails.equals(that.requestDetails) && requester.equals(that.requester);
+    }
+
 }

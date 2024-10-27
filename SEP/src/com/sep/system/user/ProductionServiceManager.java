@@ -184,4 +184,12 @@ public class ProductionServiceManager extends User {
         return financialRequests;
     }
 
+    public void setStatusFinancialRequest(FinancialRequest financialRequest){
+        for (FinancialRequest fr : financialRequests) {
+            if(fr.equals(financialRequest)){
+                fr.setStatus(financialRequest.getStatus());
+            }
+        }
+    }
+
 }

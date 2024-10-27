@@ -21,3 +21,23 @@ the possible accounts are listed below
 | Service Manager         | sm       | sm       |
 | HR Team                 | hr       | hr       |
 | Audio                   | audio    | audio    |
+
+
+## Running the Program on macOS
+
+To compile and run this Java program on macOS, follow these steps in your Terminal:
+
+1. **Navigate to the Project Directory**  
+Open Terminal and change to the root directory of your project:
+
+cd /path/to/your/project
+
+2. **Compile the Java Files**
+Compile all Java files, specifying the bin directory for the compiled classes. This command includes both the main.java file in src (which contains the main method) and all other files in subdirectories:
+
+javac -d bin src/main.java src/**/*.java
+
+3. **Run the Program**
+Run the compiled program by specifying the classpath (-cp) and the main class (in this case, Main):
+
+java -cp bin Main

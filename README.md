@@ -75,5 +75,3 @@ Run the compiled program by specifying the classpath (-cp) and the main class (i
 ```cmd
 java -cp bin Main
 ```
-
-Note: On Windows, use backslashes (`\`) for file paths instead of forward slashes (`/`). If you're using PowerShell instead of Command Prompt, forward slashes will work as well.

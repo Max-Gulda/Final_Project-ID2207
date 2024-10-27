@@ -13,11 +13,11 @@ the possible accounts are listed below
 
 | User                    | Username | Password |
 |-------------------------|----------|----------|
-| Customer Service        | CS       | CS       |
-| Senior Customer Service | SCS      | SCSO     |
-| Financial Manager       | FM       | FM       |
-| Administration Manager  | AM       | AM       |
-| Production Manager      | PM       | PM       |
-| Service Manager         | SM       | SM       |
-| HR Team                 | HR       | HR       |
-| Audio                   | Audio    | Audio    |
+| Customer Service        | cs       | cs       |
+| Senior Customer Service | scso     | scso     |
+| Financial Manager       | fm       | fm       |
+| Administration Manager  | am       | am       |
+| Production Manager      | pm       | pm       |
+| Service Manager         | sm       | sm       |
+| HR Team                 | hr       | hr       |
+| Audio                   | audio    | audio    |

@@ -31,9 +31,9 @@ public class AdminManagerView {
         adminManagerPanel.add(processEventButton);
 
         // Button to finalize event requests
-        JButton finalizeEventRequestsButton = new JButton("Finalize Event Requests");
-        finalizeEventRequestsButton.addActionListener(e -> controller.handleFinalizeEventRequests());
-        adminManagerPanel.add(finalizeEventRequestsButton);
+        //JButton finalizeEventRequestsButton = new JButton("Finalize Event Requests");
+        //finalizeEventRequestsButton.addActionListener(e -> controller.handleFinalizeEventRequests());
+        //adminManagerPanel.add(finalizeEventRequestsButton);
 
         // Button to log out
         JButton logoutButton = new JButton("Logout");

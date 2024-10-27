@@ -49,29 +49,3 @@ Run the compiled program by specifying the classpath (-cp) and the main class (i
 ```bash
 java -cp bin Main
 ```
-
-
-## Windows
-
-To compile and run this Java program on Windows, follow these steps in Command Prompt:
-
-### 1. Navigate to the Project Directory
-
-Open Command Prompt and change to the root directory of your project:
-```cmd
-cd C:\path\to\your\project
-```
-
-### 2. Compile the Java Files
-
-Compile all Java files, specifying the bin directory for the compiled classes. This command includes both the main.java file in src (which contains the main method) and all other files in subdirectories:
-```cmd
-javac -d bin src\main.java src\**\*.java
-```
-
-### 3. Run the Program
-
-Run the compiled program by specifying the classpath (-cp) and the main class (in this case, Main):
-```cmd
-java -cp bin Main
-```

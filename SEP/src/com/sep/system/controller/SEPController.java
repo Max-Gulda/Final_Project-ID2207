@@ -2,6 +2,7 @@ package com.sep.system.controller;
 
 import com.sep.system.auth.AuthenticationService;
 import com.sep.system.requests.EventRequest;
+import com.sep.system.requests.FinancialRequest;
 import com.sep.system.requests.StaffRecruitmentRequest;
 import com.sep.system.user.*;
 import com.sep.system.tasks.Task;
@@ -20,6 +21,7 @@ public class SEPController {
     private CardLayout cardLayout;
     private JPanel cards;
     private List<StaffRecruitmentRequest> staffRecruitmentRequests = new ArrayList<>();
+    private List<FinancialRequest> financialRequests = new ArrayList<>();
 
 
     public SEPController(AuthenticationService authService, DataManager dataManager, JFrame frame, CardLayout cardLayout, JPanel cards) {
@@ -185,6 +187,62 @@ public class SEPController {
             JOptionPane.showMessageDialog(frame, "Staff recruitment request sent to HR Manager.");
         } else {
             JOptionPane.showMessageDialog(frame, "You do not have permission to make staff recruitment requests.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void handleFinancialRequest(String details) {
+        if (loggedInUser instanceof ProductionServiceManager) {
+            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
+            psm.createFinancialRequest(details);
+            FinancialRequest request = new FinancialRequest(details, psm);
+            financialRequests.add(request);
+            // Forward the request to the Financial Manager
+            forwardFinancialRequestToFM(request);
+            JOptionPane.showMessageDialog(frame, "Financial request sent to Financial Manager.");
+        } else {
+            JOptionPane.showMessageDialog(frame, "You do not have permission to make financial requests.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Helper method to forward the financial request to the Financial Manager
+    private void forwardFinancialRequestToFM(FinancialRequest request) {
+        List<User> users = authService.getUsers();
+        for (User user : users) {
+            if (user instanceof FinancialManager) {
+                FinancialManager fm = (FinancialManager) user;
+                fm.receiveFinancialRequest(request);
+                break;
+            }
+        }
+    }
+
+    // Method to get financial requests for the PSM
+    public List<FinancialRequest> getFinancialRequestsByPSM() {
+        if (loggedInUser instanceof ProductionServiceManager) {
+            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
+            return psm.getFinancialRequests();
+        }
+        return new ArrayList<>();
+    }
+
+    // Method to get financial requests for the Financial Manager
+    public List<FinancialRequest> getFinancialRequestsForFM() {
+        if (loggedInUser instanceof FinancialManager) {
+            FinancialManager fm = (FinancialManager) loggedInUser;
+            return fm.getReceivedFinancialRequests();
+        }
+        return new ArrayList<>();
+    }
+
+    // Method to process a financial request by the Financial Manager
+    public void handleProcessFinancialRequest(FinancialRequest request, boolean approve) {
+        if (loggedInUser instanceof FinancialManager) {
+            FinancialManager fm = (FinancialManager) loggedInUser;
+            fm.processFinancialRequest(request, approve);
+            JOptionPane.showMessageDialog(frame, "Financial request " + (approve ? "approved." : "disapproved."));
+            dataManager.saveUsers(authService.getUsers()); // Save the updated state
+        } else {
+            JOptionPane.showMessageDialog(frame, "You do not have permission to process financial requests.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

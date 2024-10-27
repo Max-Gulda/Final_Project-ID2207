@@ -1,5 +1,6 @@
 package com.sep.system.user;
 
+import com.sep.system.requests.FinancialRequest;
 import com.sep.system.requests.StaffRecruitmentRequest;
 import com.sep.system.tasks.Task;
 import com.sep.system.auth.AuthenticationService; // Import the AuthenticationService
@@ -10,6 +11,7 @@ public class ProductionServiceManager extends User {
     private Map<String, List<Task>> tasks;
     private AuthenticationService authService; // Reference to AuthenticationService
     private List<StaffRecruitmentRequest> staffRecruitmentRequests;
+    private List<FinancialRequest> financialRequests;
 
     // Constructor
     public ProductionServiceManager(String username, String password) {
@@ -17,6 +19,7 @@ public class ProductionServiceManager extends User {
         this.subTeams = new HashMap<>();
         this.tasks = new HashMap<>();
         this.staffRecruitmentRequests = new ArrayList<>();
+        this.financialRequests = new ArrayList<>();
     }
 
     public void setAuthService(AuthenticationService authService) {
@@ -166,6 +169,17 @@ public class ProductionServiceManager extends User {
     // Getter for staff recruitment requests
     public List<StaffRecruitmentRequest> getStaffRecruitmentRequests() {
         return staffRecruitmentRequests;
+    }
+
+    public void createFinancialRequest(String details) {
+        FinancialRequest request = new FinancialRequest(details, this);
+        financialRequests.add(request);
+        System.out.println("Financial request created and sent to Financial Manager.");
+    }
+
+    // Getter for financial requests
+    public List<FinancialRequest> getFinancialRequests() {
+        return financialRequests;
     }
 
 }

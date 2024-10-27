@@ -2,6 +2,7 @@
 package com.sep.system.gui;
 
 import com.sep.system.controller.SEPController;
+import com.sep.system.requests.FinancialRequest;
 import com.sep.system.requests.StaffRecruitmentRequest;
 import com.sep.system.tasks.*;
 
@@ -65,6 +66,15 @@ public class PSMView {
         JButton viewSubTeamsButton = new JButton("View Sub-Teams");
         viewSubTeamsButton.addActionListener(e -> controller.handleViewSubTeams());
         buttonPanel.add(viewSubTeamsButton);
+
+        JButton requestFinancialButton = new JButton("Request Financial Approval");
+        requestFinancialButton.addActionListener(e -> showFinancialRequestDialog());
+        buttonPanel.add(requestFinancialButton);
+
+        // Button to view financial request status
+        JButton viewFinancialRequestsButton = new JButton("View Financial Requests");
+        viewFinancialRequestsButton.addActionListener(e -> showFinancialRequestsStatus());
+        buttonPanel.add(viewFinancialRequestsButton);
 
         // Button to log out
         JButton logoutButton = new JButton("Logout");
@@ -202,7 +212,38 @@ public class PSMView {
         taskDetailsArea.setText(sb.toString());
     }
 
+    private void showFinancialRequestDialog() {
+        JTextArea requestDetailsArea = new JTextArea(5, 20);
+        Object[] message = {
+                "Request Details:", new JScrollPane(requestDetailsArea)
+        };
+
+        int option = JOptionPane.showConfirmDialog(psmPanel, message, "Financial Request", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            String details = requestDetailsArea.getText();
+            controller.handleFinancialRequest(details);
+        }
+    }
+
+    // Method to display the status of financial requests
+    private void showFinancialRequestsStatus() {
+        List<FinancialRequest> requests = controller.getFinancialRequestsByPSM();
+
+        if (requests.isEmpty()) {
+            taskDetailsArea.setText("No financial requests.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (FinancialRequest request : requests) {
+            sb.append("Details:\n").append(request.getRequestDetails()).append("\n");
+            sb.append("Status: ").append(request.getStatus()).append("\n\n");
+        }
+        taskDetailsArea.setText(sb.toString());
+    }
+
     public JPanel getPanel() {
         return psmPanel;
     }
+
 }

@@ -58,14 +58,6 @@ public class Task {
         this.plan = plan;
     }
 
-    public boolean isNeedsReview() {
-        return needsReview;
-    }
-
-    public ProductionServiceManager getAssignedPSM() {
-        return assignedPSM;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

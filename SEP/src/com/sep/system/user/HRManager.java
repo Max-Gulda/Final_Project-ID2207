@@ -14,8 +14,4 @@ public class HRManager extends User {
         return this.getUsername().equals(username) && this.getPassword().equals(password);
     }
 
-    // HRManager-specific methods
-    public void approveHRRequest() {
-        System.out.println("Approving HR request...");
-    }
 }

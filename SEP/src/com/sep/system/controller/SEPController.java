@@ -270,34 +270,6 @@ public class SEPController {
         return new ArrayList<>();
     }
 
-
-    // Handle viewing all event requests by any logged-in user
-    public void handleViewAllRequests() {
-        StringBuilder requestsInfo = new StringBuilder();
-        List<User> users = authService.getUsers();
-        for (User user : users) {
-            if (user instanceof CSO) {
-                CSO cso = (CSO) user;
-                for (EventRequest request : cso.getEventRequests()) {
-                    requestsInfo.append("Event Name: ").append(request.getEventName()).append("\n")
-                            .append("Client Name: ").append(request.getClientName()).append("\n")
-                            .append("Description: ").append(request.getDescription()).append("\n")
-                            .append("Budget: ").append(request.getBudget()).append("\n")
-                            .append("Status: ").append(request.getStatus()).append("\n")
-                            .append("Budget Comment: ").append(request.getBudgetComment() != null ? request.getBudgetComment() : "N/A").append("\n")
-                            .append("Finalized: ").append(request.isFinalized() ? "Yes" : "No").append("\n")
-                            .append("\n");
-                }
-            }
-        }
-
-        if (requestsInfo.length() == 0) {
-            requestsInfo.append("No requests available.");
-        }
-
-        JOptionPane.showMessageDialog(frame, requestsInfo.toString(), "View All Requests", JOptionPane.INFORMATION_MESSAGE);
-    }
-
     // Handle creating a task for a sub-team
     public void handleCreateTaskForSubTeam(String description, double budget, String subTeamName) {
         if (loggedInUser instanceof ProductionServiceManager) {
@@ -328,97 +300,6 @@ public class SEPController {
             JOptionPane.showMessageDialog(frame, "You do not have permission to create tasks.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
-
-    public void handleViewAllCreatedTasks() {
-        if (loggedInUser instanceof ProductionServiceManager) {
-            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
-            String tasksInfo = psm.viewAllCreatedTasks();
-            JOptionPane.showMessageDialog(frame, tasksInfo, "All Created Tasks", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(frame, "You do not have permission to view tasks.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-
-    public void handleFinalizeEventRequests() {
-        if (loggedInUser instanceof AdminManager) {
-            StringBuilder pendingRequestsInfo = new StringBuilder();
-            List<User> users = authService.getUsers();
-
-            // Collect all pending, approved event requests for finalization
-            for (User user : users) {
-                if (user instanceof CSO) {
-                    CSO cso = (CSO) user;
-                    for (EventRequest request : cso.getEventRequests()) {
-                        if ("APPROVED".equals(request.getStatus()) && !request.isFinalized()) {
-                            pendingRequestsInfo.append("Event Name: ").append(request.getEventName()).append("\n")
-                                    .append("Client Name: ").append(request.getClientName()).append("\n")
-                                    .append("Description: ").append(request.getDescription()).append("\n")
-                                    .append("Budget: ").append(request.getBudget()).append("\n")
-                                    .append("Status: ").append(request.getStatus()).append("\n")
-                                    .append("Budget Comment: ").append(request.getBudgetComment() != null ? request.getBudgetComment() : "N/A").append("\n")
-                                    .append("\n");
-                        }
-                    }
-                }
-            }
-
-            if (pendingRequestsInfo.length() == 0) {
-                JOptionPane.showMessageDialog(frame, "No pending event requests for finalization.", "Finalize Event Requests", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            // Display pending requests
-            JTextArea textArea = new JTextArea(pendingRequestsInfo.toString());
-            textArea.setEditable(false);
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            Object[] options = {"Finalize", "Cancel"};
-
-            int option = JOptionPane.showOptionDialog(frame, scrollPane, "Pending Event Requests",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-            if (option == JOptionPane.YES_OPTION) {
-                // Iterate over users again to finalize event requests
-                for (User user : users) {
-                    if (user instanceof CSO) {
-                        CSO cso = (CSO) user;
-                        for (EventRequest request : cso.getEventRequests()) {
-                            if ("APPROVED".equals(request.getStatus()) && !request.isFinalized()) {
-                                request.setFinalized(true);
-                                JOptionPane.showMessageDialog(frame, "Event request for " + request.getEventName() + " has been finalized.");
-                            }
-                        }
-                    }
-                }
-                dataManager.saveUsers(authService.getUsers());  // Save the updated state after finalizing requests
-            }
-        } else {
-            JOptionPane.showMessageDialog(frame, "You do not have permission to finalize event requests.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-    // Get the names of sub-teams managed by the logged-in PSM
-    public String[] getSubTeamNamesForPSM() {
-        if (loggedInUser instanceof ProductionServiceManager) {
-            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
-            return psm.getSubTeams().keySet().toArray(new String[0]);
-        }
-        return new String[]{};
-    }
-
-    // Get tasks for the selected sub-team
-    public List<Task> getTasksForSubTeam(String subTeamName) {
-        if (loggedInUser instanceof ProductionServiceManager) {
-            ProductionServiceManager psm = (ProductionServiceManager) loggedInUser;
-            return psm.getTasksForSubTeam(subTeamName);
-        }
-        return new ArrayList<>();
-    }
-
 
     // Update the main menu based on the user's role
     public void updateMainMenuForUser() {
@@ -485,31 +366,6 @@ public class SEPController {
         }
     }
 
-    public void handleViewMyTasks() {
-        if (loggedInUser instanceof SimpleUser) {
-            SimpleUser simpleUser = (SimpleUser) loggedInUser;
-            List<Task> tasks = simpleUser.getAssignedTasks();  // Retrieve assigned tasks
-
-            // Use a Set to track unique tasks
-            Set<Task> uniqueTasks = new HashSet<>(tasks); // This removes duplicates
-
-            if (uniqueTasks.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "You have no assigned tasks.", "View My Tasks", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                StringBuilder taskInfo = new StringBuilder();
-                for (Task task : uniqueTasks) {
-                    taskInfo.append(task.toString()).append("\n"); // Append each unique task
-                }
-                JTextArea textArea = new JTextArea(taskInfo.toString());
-                textArea.setEditable(false);
-                JScrollPane scrollPane = new JScrollPane(textArea);
-                JOptionPane.showMessageDialog(frame, scrollPane, "My Tasks", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(frame, "You do not have permission to view tasks.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     public User getLoggedInUser() {
         return loggedInUser; // Return the currently logged-in user
     }
@@ -561,26 +417,6 @@ public class SEPController {
         } else {
             JOptionPane.showMessageDialog(frame, "You do not have permission to add comments.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    // Utility method to find a component by its name in a container
-    private Component findComponentByName(Container container, String name) {
-        for (Component component : container.getComponents()) {
-            if (name.equals(component.getName())) {
-                return component;
-            }
-        }
-        return null;
-    }
-
-    // Utility method to find a component by its button text in a container
-    private Component findComponentByText(Container container, String text) {
-        for (Component component : container.getComponents()) {
-            if (component instanceof JButton && text.equals(((JButton) component).getText())) {
-                return component;
-            }
-        }
-        return null;
     }
 
     // Handle processing event requests as SCSO

@@ -13,7 +13,6 @@ public class SCSOView {
         this.controller = controller;
         initSCSOPanel();
     }
-
     private void initSCSOPanel() {
         scsoPanel = new JPanel(new GridLayout(4, 1));
 
